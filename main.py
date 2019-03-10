@@ -180,6 +180,84 @@ class Mino:
             0, 0, 0, 0,
         ],
     ]
+    PARTTERN_1 = [
+        [
+            0, 0, 1, 0,
+            1, 1, 2, 0,
+            0, 0, 0, 0,
+            0, 0, 0, 0,
+        ],
+        [
+            0, 1, 0, 0,
+            0, 1, 0, 0,
+            0, 2, 1, 0,
+            0, 0, 0, 0,
+        ],
+        [
+            0, 0, 0, 0,
+            0, 2, 1, 1,
+            0, 1, 0, 0,
+            0, 0, 0, 0,
+        ],
+        [
+            0, 0, 0, 0,
+            0, 1, 2, 0,
+            0, 0, 1, 0,
+            0, 0, 1, 0,
+        ],
+    ]
+    PARTTERN_2 = [
+        [
+            0, 2, 1, 0,
+            1, 1, 0, 0,
+            0, 0, 0, 0,
+            0, 0, 0, 0,
+        ],
+        [
+            1, 0, 0, 0,
+            2, 1, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 0, 0,
+        ],
+        [
+            0, 2, 1, 0,
+            1, 1, 0, 0,
+            0, 0, 0, 0,
+            0, 0, 0, 0,
+        ],
+        [
+            1, 0, 0, 0,
+            2, 1, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 0, 0,
+        ],
+    ]
+    PARTTERN_3 = [
+        [
+            0, 1, 0, 0,
+            0, 2, 0, 0,
+            0, 1, 0, 0,
+            0, 1, 0, 0,
+        ],
+        [
+            0, 0, 0, 0,
+            1, 2, 1, 1,
+            0, 0, 0, 0,
+            0, 0, 0, 0,
+        ],
+        [
+            0, 1, 0, 0,
+            0, 2, 0, 0,
+            0, 1, 0, 0,
+            0, 1, 0, 0,
+        ],
+        [
+            0, 0, 0, 0,
+            1, 2, 1, 1,
+            0, 0, 0, 0,
+            0, 0, 0, 0,
+        ],
+    ]
     def __init__(self):
         self.data = array2d.Array2D(4, 4)
         self.idx = 0
@@ -188,7 +266,14 @@ class Mino:
         self.set_pattern(self.idx)
 
     def set_pattern(self, idx):
-        list = self.PARTTERN_0[self.rot]
+        if idx == 0:
+            list = self.PARTTERN_0[self.rot]
+        elif idx == 1:
+            list = self.PARTTERN_1[self.rot]
+        elif idx == 2:
+            list = self.PARTTERN_2[self.rot]
+        elif idx == 3:
+            list = self.PARTTERN_3[self.rot]
         for i, v in enumerate(list):
             self.data.set_from_idx(i, v)
 
@@ -254,6 +339,11 @@ class Mino:
             LineEffect.add(x, 0, 1, Map.HEIGHT)
         for y in yline:
             LineEffect.add(0, y, Map.WIDTH, 1)
+        
+        self.idx += 1
+        if self.idx > 3:
+            self.idx = 0
+        self.set_pattern(self.idx)
 
     def check_to_erase_line_xaxis(self, y):
         for i in range(Map.WIDTH):
@@ -581,7 +671,8 @@ class App:
             # マップの描画
             self.draw_map()
         # テトリミノの描画
-        self.draw_mino()
+        if self.state == State.Standby:
+            self.draw_mino()
         # ドアの描画
         self.draw_door()
         # プレイヤーの描画
@@ -594,7 +685,8 @@ class App:
             LineEffect.parent.draw()
 
         if pyxel.frame_count%24 < 4:
-            self.mino.draw_line()
+            if self.state == State.Standby:
+                self.mino.draw_line()
 
         if self.state == State.GameClear:
             pyxel.text(4, 52, "GAME CLEAR", 9)
